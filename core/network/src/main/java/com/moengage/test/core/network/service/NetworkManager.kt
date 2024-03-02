@@ -16,70 +16,67 @@ import java.io.DataOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-
 object NetworkManager {
-    inline fun <reified T> get(urlString: String): Flow<NetworkResponse<T>> {
+    inline fun <reified T> get(urlString: String): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
             val response = makeHttpRequest<T>(urlString, GET, null)
             emit(NetworkResponse.Loading(false))
-            if (response != null) {
-                emit(NetworkResponse.Success(response))
+            if (response?.first != null) {
+                emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to get data")))
+                emit(NetworkResponse.Error(ApiFailureException("Failed to get data", code = response?.second)))
             }
         }
     }
 
-
-    inline fun <reified T> post(urlString: String, body: Any): Flow<NetworkResponse<T>> {
+    inline fun <reified T> post(urlString: String, body: Any): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
             val jsonBody = Gson().toJson(body)
             val response = makeHttpRequest<T>(urlString, POST, jsonBody)
             emit(NetworkResponse.Loading(false))
-            if (response != null) {
-                emit(NetworkResponse.Success(response))
+            if (response?.first != null) {
+                emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to post data")))
+                emit(NetworkResponse.Error(ApiFailureException("Failed to post data", code = response?.second)))
             }
         }
     }
 
-    inline fun <reified T> put(urlString: String, body: Any): Flow<NetworkResponse<T>> {
+    inline fun <reified T> put(urlString: String, body: Any): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
             val jsonBody = Gson().toJson(body)
             val response = makeHttpRequest<T>(urlString, PUT, jsonBody)
             emit(NetworkResponse.Loading(false))
-            if (response != null) {
-                emit(NetworkResponse.Success(response))
+            if (response?.first != null) {
+                emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to put data")))
+                emit(NetworkResponse.Error(ApiFailureException("Failed to put data", code = response?.second)))
             }
         }
     }
 
-    inline fun <reified T> delete(urlString: String): Flow<NetworkResponse<T>> {
+    inline fun <reified T> delete(urlString: String): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
             val response = makeHttpRequest<T>(urlString, DELETE, null)
             emit(NetworkResponse.Loading(false))
-            if (response != null) {
-                emit(NetworkResponse.Success(response))
+            if (response?.first != null) {
+                emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to delete data")))
+                emit(NetworkResponse.Error(ApiFailureException("Failed to delete data",code = response?.second)))
             }
         }
     }
 
-    inline fun <reified T> makeHttpRequest(urlString: String, method: String, body: String?): T? {
+    inline fun <reified T> makeHttpRequest(urlString: String, method: String, body: String?): Pair<T?, Int>? {
         var connection: HttpURLConnection? = null
         try {
             val url = URL(urlString)
             connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = method
-
 
             if (method == POST || method == PUT) {
                 connection.doOutput = true
@@ -98,13 +95,15 @@ object NetworkManager {
                 stringBuilder.append(line)
             }
 
+            val responseCode = connection.responseCode
             val gson = Gson()
-            return gson.fromJson<T>(stringBuilder.toString(), T::class.java)
+            val responseData = gson.fromJson<T>(stringBuilder.toString(), T::class.java)
+            return Pair(responseData, responseCode)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             connection?.disconnect()
         }
-        return null
+        return Pair(null, -1)
     }
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class GetNewsArticleUseCase @Inject constructor(
     /**
-     * Repository for Salaried In Bank employment related data
+     * Repository for NewsArticles
      */
     private val newsRepo: NewsRepo,
 ) {

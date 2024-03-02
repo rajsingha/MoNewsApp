@@ -35,10 +35,10 @@ class HomeScreenViewModel @Inject constructor(
         Log.e("ViewModel","Hi")
         viewModelScope.launch(Dispatchers.IO) {
             useCases.getNewsArticleUseCase.invoke().collect {
-                Log.e("ViewModel",it.toString())
                 withContext(Dispatchers.Main.immediate) {
                     when (it) {
                         is NetworkResponse.Error -> {
+                            Log.e("ViewModel ERROR",it.error?.code.toString())
                             _apiError.emit(it.error)
                         }
 
@@ -53,7 +53,7 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         is NetworkResponse.Success -> {
-                            Log.e("ViewModel",it.data.toString())
+                            Log.e("ViewModel SUCCESS",it.data.toString())
                         }
                     }
                 }

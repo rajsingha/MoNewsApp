@@ -5,5 +5,5 @@ import com.moengage.test.newsapp.homescreen.data.model.NewsArticleResponse
 import kotlinx.coroutines.flow.Flow
 
 interface NewsDataSource {
-    suspend fun getNewsData(): Flow<NetworkResponse<NewsArticleResponse>>
+    suspend fun getNewsData(): Flow<NetworkResponse<NewsArticleResponse?>>
 }
