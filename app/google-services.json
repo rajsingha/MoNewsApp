@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1068902969157",
+    "project_id": "monewsapp",
+    "storage_bucket": "monewsapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068902969157:android:52e5e706f93b5af6ba982c",
+        "android_client_info": {
+          "package_name": "com.moengage.test.newsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbpefoqEGYkiyy9_ELxA_wkYZmbFOJI9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
