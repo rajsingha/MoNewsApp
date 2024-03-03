@@ -1,7 +1,7 @@
 package com.moengage.test.newsapp.homescreen.presentation.ui.state
 
 import androidx.compose.runtime.Stable
-import com.moengage.test.newsapp.homescreen.data.model.NewsArticleResponse
+import com.moengage.test.newsapp.homescreen.data.dto.NewsArticleResponse
 
 @Stable
 data class HomeScreenUiState(

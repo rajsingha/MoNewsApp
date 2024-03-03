@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MoNewsApp</string>
     <string name="title_dynamicfeature">Core</string>
+    <string name="hi_user">Hi, User</string>
+    <string name="published_on">Published On</string>
+    <string name="read_more">Read More</string>
+    <string name="discover_the_latest_news">Discover the latest events and news from the world.</string>
+    <string name="permission_denied_not_receive_notification_from_us">Permission Denied, you will not receive notification from us!</string>
 </resources>

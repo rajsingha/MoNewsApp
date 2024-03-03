@@ -1,9 +1,11 @@
-package com.moengage.test.newsapp.homescreen.data.model
+package com.moengage.test.newsapp.homescreen.data.dto
 
 
+import androidx.compose.runtime.Stable
 import com.google.gson.annotations.SerializedName
 import kotlin.random.Random
 
+@Stable
 data class NewsArticleResponse(
     @SerializedName("articles")
     var articles: List<Article?>? = null,

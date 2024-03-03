@@ -9,6 +9,17 @@ import java.util.Date
 import java.util.Locale
 
 object Utils {
+    const val ZERO = 0
+    const val ONE = 1
+    const val TWO = 2
+    const val THREE = 3
+    const val FOUR = 4
+    const val FIVE = 5
+    const val SIX = 6
+    const val SEVEN = 7
+    const val EIGHT = 8
+    const val TEN = 10
+
     private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US)
     fun Activity.openUrlInBrowser(url: String) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -24,5 +35,32 @@ object Utils {
             e.printStackTrace()
         }
         return null
+    }
+
+    fun String.populateCleanName(
+        action: (firstName: String, lastName: String) -> Unit
+    ) {
+        if (this.isEmpty().not()) {
+            val cleanedName = this.replace("//s+", "").trim()
+            val names: List<String?> = cleanedName.split(" ")
+            var firstName = ""
+            var lastName = ""
+            when (names.size) {
+                THREE -> {
+                    firstName = names[ZERO] ?: ""
+                    lastName = names[TWO] ?: ""
+                }
+
+                TWO -> {
+                    firstName = names[ZERO] ?: ""
+                    lastName = names[ONE] ?: ""
+                }
+
+                ONE -> {
+                    firstName = names[ZERO] ?: ""
+                }
+            }
+            action.invoke(firstName, lastName)
+        }
     }
 }

@@ -1,15 +1,21 @@
 package com.moengage.test.newsapp.homescreen.presentation.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -51,9 +57,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
@@ -67,10 +76,11 @@ import com.moengage.test.core.ui.theme.Spacing
 import com.moengage.test.core.utils.Constants.NO_APPLICATION_TO_HANDLE
 import com.moengage.test.core.utils.Utils.openUrlInBrowser
 import com.moengage.test.newsapp.R
-import com.moengage.test.newsapp.homescreen.data.model.NewsArticleResponse
+import com.moengage.test.newsapp.homescreen.data.dto.NewsArticleResponse
 import com.moengage.test.newsapp.homescreen.presentation.utils.HomeScreenUiEvents
 import com.moengage.test.newsapp.homescreen.presentation.viewmodels.HomeScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.random.Random.Default.nextInt
 
@@ -83,6 +93,7 @@ private var onSortByOldArticlesPressed: () -> Unit = {}
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: HomeScreenViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -90,7 +101,21 @@ class MainActivity : ComponentActivity() {
             val snackBarHostState = remember {
                 SnackbarHostState()
             }
+            val permissionLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted ->
+                if (isGranted.not()) {
+                    viewModel.onUiEvent(
+                        HomeScreenUiEvents.OnTriggerUiEvents(
+                            UiEvents.ShowSnackBar(
+                                getString(R.string.permission_denied_not_receive_notification_from_us)
+                            )
+                        )
+                    )
+                }
+            }
 
+            SetStatusBarColorDark()
             MoNewsAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -145,7 +170,31 @@ class MainActivity : ComponentActivity() {
             }, onSortByOldArticlesBtnPressed = {
                 viewModel.onUiEvent(HomeScreenUiEvents.OnOldArticlesSelected)
             })
-            SetStatusBarColorDark()
+
+            LaunchedEffect(Unit) {
+                delay(10000)
+                askNotificationPermission {
+                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun askNotificationPermission(requestPermission: () -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+                // FCM SDK (and your app) can post notifications.
+            } else if (shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            ) {
+                //TODO show permission dialog if necessary
+            } else {
+                requestPermission.invoke()
+            }
         }
     }
 }
@@ -290,15 +339,15 @@ private fun StickyHeader() {
             )
             Spacer(modifier = Modifier.width(Spacing.spacing10))
             Text(
-                text = "Hi, User",
+                text = stringResource(R.string.hi_user),
                 color = Color.White,
-                style = MaterialTheme.typography.displayLarge
+                style = MaterialTheme.typography.displayMedium
             )
             SortingComponent(modifier = Modifier.weight(1f))
         }
         Spacer(modifier = Modifier.height(Spacing.spacing20))
         Text(
-            text = "Discover the latest events and news from the world.",
+            text = stringResource(R.string.discover_the_latest_news),
             color = Color.White,
         )
         Spacer(modifier = Modifier.height(Spacing.spacing10))
@@ -312,33 +361,63 @@ private fun SortingComponent(modifier: Modifier = Modifier) {
         targetValue = if (expandedState) 180f else 0f, label = ""
     )
 
-    Row(
-        modifier = modifier.clickable {
-            expandedState = expandedState.not()
-            if (expandedState) {
-                onSortByOldArticlesPressed.invoke()
-            } else {
-                onSortByNewArticlesPressed.invoke()
-            }
-        },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
-    ) {
-        Text(
-            text = "Published On",
-            color = Color.White,
-        )
-        IconButton(modifier = Modifier
-            .size(Spacing.spacing24)
-            .rotate(rotationState), onClick = {
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_downward),
-                contentDescription = null,
-                tint = Color.White
+    ConstraintLayout(modifier.background(Color.Black)) {
+        val (dateBtn) = createRefs()
+        Row(
+            modifier = Modifier
+                .background(
+                    Color.White,
+                    shape = RoundedCornerShape(Spacing.spacing12)
+                )
+                .constrainAs(dateBtn) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+                .clickable {
+                    expandedState = expandedState.not()
+                    if (expandedState) {
+                        onSortByOldArticlesPressed.invoke()
+                    } else {
+                        onSortByNewArticlesPressed.invoke()
+                    }
+                }
+                .clip(RoundedCornerShape(Spacing.spacing12))
+                .border(
+                    width = Spacing.spacing1,
+                    color = Color.Black,
+                    shape = RoundedCornerShape(
+                        Spacing.spacing12
+                    )
+                )
+                .padding(horizontal = Spacing.spacing12, vertical = Spacing.spacing8),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Text(
+                text = stringResource(R.string.published_on),
+                color = Color.Black,
+                style = MaterialTheme.typography.titleSmall
             )
+            IconButton(modifier = Modifier
+                .size(Spacing.spacing24)
+                .rotate(rotationState), onClick = {
+                expandedState = expandedState.not()
+                if (expandedState) {
+                    onSortByOldArticlesPressed.invoke()
+                } else {
+                    onSortByNewArticlesPressed.invoke()
+                }
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_downward),
+                    contentDescription = null,
+                    tint = Color.Black
+                )
+            }
         }
     }
+
 }
 
 @Composable
@@ -391,7 +470,10 @@ private fun DescriptionCard(
                         start.linkTo(titleText.start)
                         bottom.linkTo(button.bottom)
                     },
-                text = "${article?.author.orEmpty()} . ${article?.publishedAt?.take(10).orEmpty()}",
+                text = article?.author.orEmpty() + " | " +
+                        article?.publishedAt?.take(
+                            10
+                        ).orEmpty(),
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.Black
@@ -403,7 +485,7 @@ private fun DescriptionCard(
                         top.linkTo(descriptionText.bottom, Spacing.spacing8)
                         end.linkTo(titleText.end)
                         bottom.linkTo(parent.bottom)
-                    }, text = "Read More",
+                    }, text = stringResource(R.string.read_more),
                 textColor = Color.White, onClick = {
                     onReadMorePressed.invoke(article?.url.orEmpty())
                 }
@@ -411,3 +493,6 @@ private fun DescriptionCard(
         }
     }
 }
+
+
+

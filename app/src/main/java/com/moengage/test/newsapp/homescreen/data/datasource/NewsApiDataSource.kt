@@ -1,7 +1,7 @@
 package com.moengage.test.newsapp.homescreen.data.datasource
 
 import com.moengage.test.core.network.service.NetworkManager
-import com.moengage.test.newsapp.homescreen.data.model.NewsArticleResponse
+import com.moengage.test.newsapp.homescreen.data.dto.NewsArticleResponse
 import javax.inject.Inject
 
 

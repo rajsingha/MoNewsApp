@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.moengage.test.core.network.base.NetworkResponse
 import com.moengage.test.core.ui.base.UiEvents
 import com.moengage.test.core.utils.Utils.parseDate
+import com.moengage.test.core.utils.Utils.populateCleanName
+import com.moengage.test.newsapp.homescreen.data.dto.NewsArticleResponse
 import com.moengage.test.newsapp.homescreen.domain.usecase.NewsUseCases
 import com.moengage.test.newsapp.homescreen.presentation.ui.state.HomeScreenUiState
 import com.moengage.test.newsapp.homescreen.presentation.utils.HomeScreenUiEvents
@@ -84,8 +86,8 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         is NetworkResponse.Success -> {
-                            it.data?.articles?.let {
-                                updateUiState(uiState.value.copy(newsArticles = it))
+                            it.data?.articles?.let { articles ->
+                                cleanAndUpdateArticles(articles)
                             }
                         }
                     }
@@ -93,6 +95,29 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
+    private fun cleanAndUpdateArticles(articles: List<NewsArticleResponse.Article?>) {
+        val cleanedArticles = articles.map { article ->
+            article?.copy(
+                title = article.title?.trim().orEmpty(),
+                description = article.description?.trim().orEmpty(),
+                author = article.author?.let { author ->
+                    val hasSpecialCharacters = author.any { !it.isLetterOrDigit() }
+                    var cleanedAuthor = if (hasSpecialCharacters) {
+                        ""
+                    } else {
+                        author
+                    }
+                    author.populateCleanName { firstName, lastName ->
+                        cleanedAuthor = "$firstName $lastName"
+                    }
+                    cleanedAuthor
+                },
+            )
+        }
+        updateUiState(uiState.value.copy(newsArticles = cleanedArticles))
+    }
+
 
     private fun updateUiState(state: HomeScreenUiState) {
         _uiState.update { state }
