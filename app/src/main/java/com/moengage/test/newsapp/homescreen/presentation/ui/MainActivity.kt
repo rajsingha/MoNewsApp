@@ -90,6 +90,7 @@ private var onReadMorePressed: (url: String) -> Unit = {}
 private var onSortByNewArticlesPressed: () -> Unit = {}
 private var onSortByOldArticlesPressed: () -> Unit = {}
 
+/** Main activity responsible for hosting the home screen UI. */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: HomeScreenViewModel by viewModels()
@@ -98,9 +99,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+            // Snackbar host state for displaying snackbar messages
             val snackBarHostState = remember {
                 SnackbarHostState()
             }
+
+            // Launcher for requesting permission
             val permissionLauncher = rememberLauncherForActivityResult(
                 ActivityResultContracts.RequestPermission()
             ) { isGranted ->
@@ -115,7 +120,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            // Set status bar color
             SetStatusBarColorDark()
+
+            // Composable tree for the entire app
             MoNewsAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -133,12 +141,15 @@ class MainActivity : ComponentActivity() {
                             articles = uiState.newsArticles
                         )
                     }
+
+                    // Display a progress dialog when loading
                     if (uiState.isLoading) {
                         ProgressDialog()
                     }
                 }
             }
 
+            // Collect UI events from the ViewModel
             LaunchedEffect(Unit) {
                 viewModel.uiEvents.collectLatest {
                     when (it) {
@@ -171,6 +182,7 @@ class MainActivity : ComponentActivity() {
                 viewModel.onUiEvent(HomeScreenUiEvents.OnOldArticlesSelected)
             })
 
+            // Perform initial permission request for notification with 10 secs delay
             LaunchedEffect(Unit) {
                 delay(10000)
                 askNotificationPermission {
@@ -180,6 +192,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /** Requests notification permission if not already granted. */
     private fun askNotificationPermission(requestPermission: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
@@ -199,6 +212,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** Sets the status bar color to dark mode. */
 @Composable
 fun SetStatusBarColorDark() {
     val view = LocalView.current
@@ -226,6 +240,7 @@ private fun clickListeners(
     onSortByOldArticlesPressed = onSortByOldArticlesBtnPressed
 }
 
+/** List of articles displayed using LazyColumn. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LazyList(
@@ -248,6 +263,7 @@ private fun LazyList(
     }
 }
 
+/** Card representing an article. */
 @Composable
 private fun ArticleCard(article: NewsArticleResponse.Article?) {
     if (article?.urlToImage?.isNotEmpty() == true
@@ -317,6 +333,7 @@ private fun ArticleCard(article: NewsArticleResponse.Article?) {
     }
 }
 
+/** Displays a sticky header at the top of the list. */
 @Composable
 private fun StickyHeader() {
     Column(
@@ -354,6 +371,7 @@ private fun StickyHeader() {
     }
 }
 
+/** Sorting component for sorting articles. */
 @Composable
 private fun SortingComponent(modifier: Modifier = Modifier) {
     var expandedState by remember { mutableStateOf(false) }
@@ -420,6 +438,7 @@ private fun SortingComponent(modifier: Modifier = Modifier) {
 
 }
 
+/** Card containing description of an article. */
 @Composable
 private fun DescriptionCard(
     modifier: Modifier,

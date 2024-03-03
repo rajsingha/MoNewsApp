@@ -21,14 +21,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for the home screen.
+ */
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val useCases: NewsUseCases
 ) : ViewModel() {
 
+    // Shared flow for emitting UI events
     private val _uiEvents = MutableSharedFlow<UiEvents>()
     val uiEvents = _uiEvents.asSharedFlow()
 
+    // State flow for holding UI state
     private val _uiState = MutableStateFlow(HomeScreenUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -36,20 +41,31 @@ class HomeScreenViewModel @Inject constructor(
         getNewArticles()
     }
 
+    /**
+     * Sort articles by old to new publication date.
+     */
     private fun sortArticlesByOldToNew() {
         val sortedArticles = uiState.value.newsArticles.sortedBy { article ->
             parseDate(article?.publishedAt)
         }
-       updateUiState(uiState.value.copy(newsArticles = sortedArticles))
+        updateUiState(uiState.value.copy(newsArticles = sortedArticles))
     }
 
-    private fun sortArticlesByNewToOld(){
-        val sortedArticles =uiState.value.newsArticles.sortedByDescending { article ->
+    /**
+     * Sort articles by new to old publication date.
+     */
+    private fun sortArticlesByNewToOld() {
+        val sortedArticles = uiState.value.newsArticles.sortedByDescending { article ->
             parseDate(article?.publishedAt)
         }
         updateUiState(uiState.value.copy(newsArticles = sortedArticles))
     }
-    fun onUiEvent(events: HomeScreenUiEvents){
+
+    /**
+     * Function to handle UI events.
+     * @param events The UI event to handle.
+     */
+    fun onUiEvent(events: HomeScreenUiEvents) {
         viewModelScope.launch {
             when (events) {
                 is HomeScreenUiEvents.OnTriggerUiEvents -> {
@@ -66,6 +82,10 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
+    /**
+     * Fetch new articles through API.
+     */
     private fun getNewArticles() {
         viewModelScope.launch(Dispatchers.IO) {
             useCases.getNewsArticleUseCase.invoke().collect {
@@ -96,6 +116,10 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Clean and update articles.
+     * @param articles The list of articles to clean and update.
+     */
     private fun cleanAndUpdateArticles(articles: List<NewsArticleResponse.Article?>) {
         val cleanedArticles = articles.map { article ->
             article?.copy(
@@ -118,7 +142,10 @@ class HomeScreenViewModel @Inject constructor(
         updateUiState(uiState.value.copy(newsArticles = cleanedArticles))
     }
 
-
+    /**
+     * Update UI state.
+     * @param state The new UI state.
+     */
     private fun updateUiState(state: HomeScreenUiState) {
         _uiState.update { state }
     }

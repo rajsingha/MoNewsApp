@@ -16,7 +16,17 @@ import java.io.DataOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+
+/**
+ * NetworkManager, it uses singleton pattern to make api requests
+ */
 object NetworkManager {
+
+    /**
+     * Performs an HTTP GET request.
+     * @param urlString The URL to send the request to.
+     * @return A flow of [NetworkResponse] containing the response data or error.
+     */
     inline fun <reified T> get(urlString: String): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
@@ -25,11 +35,24 @@ object NetworkManager {
             if (response?.first != null) {
                 emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to get data", code = response?.second)))
+                emit(
+                    NetworkResponse.Error(
+                        ApiFailureException(
+                            "Failed to get data",
+                            code = response?.second
+                        )
+                    )
+                )
             }
         }
     }
 
+    /**
+     * Performs an HTTP POST request.
+     * @param urlString The URL to send the request to.
+     * @param body The request body to send.
+     * @return A flow of [NetworkResponse] containing the response data or error.
+     */
     inline fun <reified T> post(urlString: String, body: Any): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
@@ -39,11 +62,24 @@ object NetworkManager {
             if (response?.first != null) {
                 emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to post data", code = response?.second)))
+                emit(
+                    NetworkResponse.Error(
+                        ApiFailureException(
+                            "Failed to post data",
+                            code = response?.second
+                        )
+                    )
+                )
             }
         }
     }
 
+    /**
+     * Performs an HTTP PUT request.
+     * @param urlString The URL to send the request to.
+     * @param body The request body to send.
+     * @return A flow of [NetworkResponse] containing the response data or error.
+     */
     inline fun <reified T> put(urlString: String, body: Any): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
@@ -53,11 +89,23 @@ object NetworkManager {
             if (response?.first != null) {
                 emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to put data", code = response?.second)))
+                emit(
+                    NetworkResponse.Error(
+                        ApiFailureException(
+                            "Failed to put data",
+                            code = response?.second
+                        )
+                    )
+                )
             }
         }
     }
 
+    /**
+     * Performs an HTTP DELETE request.
+     * @param urlString The URL to send the request to.
+     * @return A flow of [NetworkResponse] containing the response data or error.
+     */
     inline fun <reified T> delete(urlString: String): Flow<NetworkResponse<T?>> {
         return flow {
             emit(NetworkResponse.Loading(true))
@@ -66,12 +114,30 @@ object NetworkManager {
             if (response?.first != null) {
                 emit(NetworkResponse.Success(response.first))
             } else {
-                emit(NetworkResponse.Error(ApiFailureException("Failed to delete data",code = response?.second)))
+                emit(
+                    NetworkResponse.Error(
+                        ApiFailureException(
+                            "Failed to delete data",
+                            code = response?.second
+                        )
+                    )
+                )
             }
         }
     }
 
-    inline fun <reified T> makeHttpRequest(urlString: String, method: String, body: String?): Pair<T?, Int>? {
+    /**
+     * Makes an HTTP request.
+     * @param urlString The URL to send the request to.
+     * @param method The HTTP method to use (GET, POST, PUT, DELETE).
+     * @param body The request body to send (for POST and PUT requests).
+     * @return A pair containing the response data and the HTTP status code.
+     */
+    inline fun <reified T> makeHttpRequest(
+        urlString: String,
+        method: String,
+        body: String?
+    ): Pair<T?, Int>? {
         var connection: HttpURLConnection? = null
         try {
             val url = URL(urlString)

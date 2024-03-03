@@ -12,10 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.DialogProperties
-import com.moengage.test.core.ui.theme.Blue500
 import com.moengage.test.core.ui.theme.Spacing
 
-
+/**
+ * Composable function to display a progress dialog with a circular indeterminate progress indicator.
+ * @param modifier Modifier to be applied to the progress dialog.
+ */
 @Composable
 fun ProgressDialog(
     modifier: Modifier = Modifier

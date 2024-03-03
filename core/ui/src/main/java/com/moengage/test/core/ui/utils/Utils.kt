@@ -32,6 +32,9 @@ fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) ->
     }
 }
 
+/**
+ * Returns the string resource associated with the provided integer resource ID, or null if the integer is null.
+ */
 @Composable
 fun Int?.getStringOrNull() = this?.let { stringResource(id = it) }
 

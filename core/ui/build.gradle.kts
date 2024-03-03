@@ -53,16 +53,14 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.0.0-alpha08")
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("com.google.android.material:material:1.8.0")
-
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("androidx.core:core-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
 }

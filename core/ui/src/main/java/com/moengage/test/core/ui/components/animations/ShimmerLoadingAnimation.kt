@@ -13,6 +13,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Adds a shimmer loading animation to the background of the composable.
+ * @param isLoadingCompleted Whether the loading animation should be shown or not.
+ * @param isLightModeActive Whether the shimmer animation is for light mode or dark mode.
+ * @param widthOfShadowBrush Width of the shadow brush used in the animation.
+ * @param angleOfAxisY Angle of the Y-axis for the gradient.
+ * @param durationMillis Duration of the animation in milliseconds.
+ * @return Modifier with shimmer loading animation.
+ */
 fun Modifier.shimmerLoadingAnimation(
     isLoadingCompleted: Boolean = true,
     isLightModeActive: Boolean = true,
@@ -22,8 +31,7 @@ fun Modifier.shimmerLoadingAnimation(
 ): Modifier {
     if (isLoadingCompleted) {
         return this
-    }
-    else {
+    } else {
         return composed {
             val shimmerColors = ShimmerAnimationData(isLightMode = isLightModeActive).getColours()
             val transition = rememberInfiniteTransition(label = "")

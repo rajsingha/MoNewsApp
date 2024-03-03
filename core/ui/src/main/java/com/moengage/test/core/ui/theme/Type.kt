@@ -7,6 +7,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.moengage.test.core.ui.R
 
+/**
+ * Custom typography for the app, defining various text styles using the Montserrat font family.
+ */
+
 val robotoFont = FontFamily(
     Font(R.font.montserrat_light, weight = FontWeight.Normal),
     Font(R.font.montserrat_medium, weight = FontWeight.Medium),

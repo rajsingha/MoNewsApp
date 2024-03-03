@@ -21,11 +21,21 @@ object Utils {
     const val TEN = 10
 
     private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US)
+
+    /**
+     * Opens the provided URL in the device's default web browser.
+     * @param url The URL to be opened in the browser.
+     */
     fun Activity.openUrlInBrowser(url: String) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         this.startActivity(browserIntent)
     }
 
+    /**
+     * Parses the provided date string into a Date object.
+     * @param dateString The string representing the date.
+     * @return The parsed Date object, or null if parsing fails.
+     */
     fun parseDate(dateString: String?): Date? {
         try {
             return dateString?.let {
@@ -37,6 +47,10 @@ object Utils {
         return null
     }
 
+    /**
+     * Extracts the first and last names from the provided string and passes them to the given action.
+     * @param action A lambda function that takes two parameters: firstName and lastName.
+     */
     fun String.populateCleanName(
         action: (firstName: String, lastName: String) -> Unit
     ) {

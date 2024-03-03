@@ -53,19 +53,24 @@ android {
 }
 
 dependencies {
+    //Modules
     implementation(project(":core:ui"))
     implementation(project(":core:network"))
     implementation(project(":core:util"))
+
+    //hilt-dagger
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
     implementation("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
-    implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("androidx.work:work-runtime:2.7.0")
     implementation("androidx.work:work-runtime-ktx:2.7.0")
+
+    //UI dependencies
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.compose.material3:material3:1.1.2")
 
     // ViewModel and LiveData
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
@@ -75,12 +80,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
 
+    //Coil for imageLoading
     implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     kapt("androidx.lifecycle:lifecycle-compiler:2.6.2")
     testImplementation("junit:junit:4.13.2")
@@ -91,9 +95,11 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
     // Firebase Dependence
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging")
 }
 
 kapt {
