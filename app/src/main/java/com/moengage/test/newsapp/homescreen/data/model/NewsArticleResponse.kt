@@ -2,6 +2,7 @@ package com.moengage.test.newsapp.homescreen.data.model
 
 
 import com.google.gson.annotations.SerializedName
+import kotlin.random.Random
 
 data class NewsArticleResponse(
     @SerializedName("articles")
@@ -25,7 +26,8 @@ data class NewsArticleResponse(
         @SerializedName("url")
         var url: String? = null,
         @SerializedName("urlToImage")
-        var urlToImage: String? = null
+        var urlToImage: String? = null,
+        val id: Int = Random.nextInt(),
     ){
         data class Source(
             @SerializedName("id")

@@ -1,12 +1,13 @@
 package com.moengage.test.newsapp.homescreen.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.moengage.test.core.network.base.NetworkResponse
-import com.moengage.test.core.network.exception_handler.ApiFailureException
+import com.moengage.test.core.ui.base.UiEvents
+import com.moengage.test.core.utils.Utils.parseDate
 import com.moengage.test.newsapp.homescreen.domain.usecase.NewsUseCases
 import com.moengage.test.newsapp.homescreen.presentation.ui.state.HomeScreenUiState
+import com.moengage.test.newsapp.homescreen.presentation.utils.HomeScreenUiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,23 +24,53 @@ class HomeScreenViewModel @Inject constructor(
     private val useCases: NewsUseCases
 ) : ViewModel() {
 
-
-    private val _apiError = MutableSharedFlow<ApiFailureException?>()
-    val apiError = _apiError.asSharedFlow()
+    private val _uiEvents = MutableSharedFlow<UiEvents>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
     private val _uiState = MutableStateFlow(HomeScreenUiState())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        getNewArticles()
+    }
 
-    fun getNewArticles() {
-        Log.e("ViewModel","Hi")
+    private fun sortArticlesByOldToNew() {
+        val sortedArticles = uiState.value.newsArticles.sortedBy { article ->
+            parseDate(article?.publishedAt)
+        }
+       updateUiState(uiState.value.copy(newsArticles = sortedArticles))
+    }
+
+    private fun sortArticlesByNewToOld(){
+        val sortedArticles =uiState.value.newsArticles.sortedByDescending { article ->
+            parseDate(article?.publishedAt)
+        }
+        updateUiState(uiState.value.copy(newsArticles = sortedArticles))
+    }
+    fun onUiEvent(events: HomeScreenUiEvents){
+        viewModelScope.launch {
+            when (events) {
+                is HomeScreenUiEvents.OnTriggerUiEvents -> {
+                    _uiEvents.emit(events.events)
+                }
+
+                HomeScreenUiEvents.OnOldArticlesSelected -> {
+                    sortArticlesByOldToNew()
+                }
+
+                HomeScreenUiEvents.OnRecentArticlesSelected -> {
+                    sortArticlesByNewToOld()
+                }
+            }
+        }
+    }
+    private fun getNewArticles() {
         viewModelScope.launch(Dispatchers.IO) {
             useCases.getNewsArticleUseCase.invoke().collect {
                 withContext(Dispatchers.Main.immediate) {
                     when (it) {
                         is NetworkResponse.Error -> {
-                            Log.e("ViewModel ERROR",it.error?.code.toString())
-                            _apiError.emit(it.error)
+                            _uiEvents.emit(UiEvents.ShowSnackBar(it.error?.message.orEmpty()))
                         }
 
                         is NetworkResponse.Loading -> {
@@ -53,7 +84,9 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         is NetworkResponse.Success -> {
-                            Log.e("ViewModel SUCCESS",it.data.toString())
+                            it.data?.articles?.let {
+                                updateUiState(uiState.value.copy(newsArticles = it))
+                            }
                         }
                     }
                 }

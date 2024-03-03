@@ -71,11 +71,18 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
 
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    kapt("androidx.lifecycle:lifecycle-compiler:2.6.2")
     testImplementation("junit:junit:4.13.2")
     annotationProcessor("androidx.hilt:hilt-compiler:1.0.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -2,33 +2,71 @@ package com.moengage.test.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import com.moengage.test.core.ui.R
 
-// Set of Material typography styles to start with
+val robotoFont = FontFamily(
+    Font(R.font.montserrat_light, weight = FontWeight.Normal),
+    Font(R.font.montserrat_medium, weight = FontWeight.Medium),
+    Font(R.font.montserrat_bold, weight = FontWeight.Bold),
+    Font(R.font.montserrat_semibold, weight = FontWeight.SemiBold)
+)
+
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+    displayLarge = TextStyle(
+        fontSize = text20,
+        lineHeight = text28,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Medium
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+    displayMedium = TextStyle(
+        fontSize = text18,
+        lineHeight = text26,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Medium
+    ),
+    displaySmall = TextStyle(
+        fontSize = text16,
+        lineHeight = text24,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.SemiBold
+    ),
+    headlineLarge = TextStyle(
+        fontSize = text14,
+        lineHeight = text22,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Medium
+    ),
+    headlineMedium = TextStyle(
+        fontSize = text12,
+        lineHeight = text20,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Medium
+    ),
+    headlineSmall = TextStyle(
+        fontSize = text11,
+        lineHeight = text20,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Medium
+    ),
+    titleLarge = TextStyle(
+        fontSize = text16,
+        lineHeight = text22,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Normal
+    ),
+    titleMedium = TextStyle(
+        fontSize = text14,
+        lineHeight = text20,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Normal
+    ),
+    titleSmall = TextStyle(
+        fontSize = text12,
+        lineHeight = text18,
+        fontFamily = robotoFont,
+        fontWeight = FontWeight.Normal
     )
-    */
 )
