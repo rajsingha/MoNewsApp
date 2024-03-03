@@ -8,5 +8,4 @@ sealed class HomeScreenUiEvents {
     object OnRecentArticlesSelected : HomeScreenUiEvents()
 
     object OnOldArticlesSelected: HomeScreenUiEvents()
-
 }

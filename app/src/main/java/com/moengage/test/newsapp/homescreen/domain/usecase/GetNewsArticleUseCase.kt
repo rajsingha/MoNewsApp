@@ -11,7 +11,6 @@ class GetNewsArticleUseCase @Inject constructor(
      */
     private val newsRepo: NewsRepo,
 ) {
-
     /**
      * Invokes the use case to retrieve news articles information asynchronously.
      */

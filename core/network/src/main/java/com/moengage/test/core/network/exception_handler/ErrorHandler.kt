@@ -4,7 +4,6 @@ import android.net.sip.SipErrorCode
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.moengage.test.core.network.base.NetworkResponse
-import com.mpokket.core.network.exception_handler.NoNetworkException
 import java.net.ConnectException
 
 object ErrorHandler {

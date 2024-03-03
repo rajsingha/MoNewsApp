@@ -8,11 +8,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepoModule {
-
     @Singleton
     @Binds
     abstract fun provideNewsRepo(repo: NewsRepoImpl): NewsRepo

@@ -1,4 +1,4 @@
-package com.mpokket.core.network.exception_handler
+package com.moengage.test.core.network.exception_handler
 
 import java.io.IOException
 
