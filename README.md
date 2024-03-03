@@ -32,10 +32,11 @@ publication dates, and displaying them in an intuitive user interface.
   management of dependencies and improving app maintainability.
 - **Coroutines**: Leverages Kotlin Coroutines for asynchronous and non-blocking programming,
   ensuring smooth and responsive app behavior.
-- **Unit Testing**: Includes unit tests for business logic and data layers, promoting code quality
-  and reliability.
 - **API Integration**: Demonstrates integration with external APIs to fetch and display data in the
   application.
+-
+    - **Notification Service**: Implements a notification service to send push notifications to
+      users, enhancing user engagement and interaction.
 
 ## Project Structure
 
